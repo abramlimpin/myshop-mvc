@@ -72,7 +72,11 @@ namespace MyShopMVC.Models
         [Display(Name ="Status")]
         public string Status { get; set; }
 
+        [Display(Name ="Date Added")]
         public DateTime DateAdded { get; set; }
+
+        [Display(Name ="Date Modified")]
+        [DisplayFormat(NullDisplayText = "")]
         public DateTime? DateModified { get; set; }
     }
 }

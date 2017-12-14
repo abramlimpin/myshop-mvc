@@ -107,5 +107,47 @@ namespace MyShopMVC.Controllers
                 }
             }
         }
+
+        public ActionResult Index()
+        {
+            var list = new List<User>();
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"SELECT u.UserID, t.UserType, u.FirstName, u.LastName,
+                    u.Email, u.Street, u.Municipality, u.City,
+                    u.Phone, u.Mobile, u.Status,
+                    u.DateAdded, u.DateModified
+                    FROM Users u
+                    INNER JOIN Types t ON u.TypeID = t.TypeID";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    using (SqlDataReader data = cmd.ExecuteReader())
+                    {
+                        while (data.Read())
+                        {
+                            list.Add(new User
+                            {
+                                ID = int.Parse(data["UserID"].ToString()),
+                                UserType = data["UserType"].ToString(),
+                                FN = data["FirstName"].ToString(),
+                                LN = data["LastName"].ToString(),
+                                Email = data["Email"].ToString(),
+                                Street = data["Street"].ToString(),
+                                Municipality = data["Municipality"].ToString(),
+                                City = data["City"].ToString(),
+                                Phone = data["Phone"].ToString(),
+                                Mobile = data["Mobile"].ToString(),
+                                Status = data["Status"].ToString(),
+                                DateAdded = DateTime.Parse(data["DateAdded"].ToString()),
+                                DateModified = data["DateModified"].ToString() == "" ? (DateTime?)null :
+                                    DateTime.Parse(data["DateModified"].ToString())
+                            });
+                        }
+                    }
+                }
+            }
+            return View(list);
+        }
     }
 }
