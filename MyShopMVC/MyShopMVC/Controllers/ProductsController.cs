@@ -44,5 +44,39 @@ namespace MyShopMVC.Controllers
             record.Categories = GetCategories();
             return View(record);
         }
+
+        [HttpPost]
+        public ActionResult Add(Product record, HttpPostedFileBase image)
+        {
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"INSERT INTO Products VALUES
+                    (@Name, @CatID, @Code, @Description, @Image,
+                    @Price, @IsFeatured, @Available, @CriticalLevel,
+                    @Maximum, @Status, @DateAdded, @DateModified)";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Name", record.Name);
+                    cmd.Parameters.AddWithValue("@CatID", record.CatID);
+                    cmd.Parameters.AddWithValue("@Code", record.Code);
+                    cmd.Parameters.AddWithValue("@Description", record.Description);
+                    cmd.Parameters.AddWithValue("@Image", DateTime.Now.ToString("yyyyMMddhhmmss-") +
+                        image.FileName);
+                    image.SaveAs(Server.MapPath("~/Images/Products/" + DateTime.Now.ToString("yyyyMMddhhmmss-") +
+                        image.FileName));
+                    cmd.Parameters.AddWithValue("@Price", record.Price);
+                    cmd.Parameters.AddWithValue("@IsFeatured", record.IsFeatured ? "Yes" : "No");
+                    cmd.Parameters.AddWithValue("@Available", 0);
+                    cmd.Parameters.AddWithValue("@CriticalLevel", record.Critical);
+                    cmd.Parameters.AddWithValue("@Maximum", record.Max);
+                    cmd.Parameters.AddWithValue("@Status", "Active");
+                    cmd.Parameters.AddWithValue("@DateAdded", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@DateModified", DBNull.Value);
+                    cmd.ExecuteNonQuery();
+                    return RedirectToAction("Index");
+                }
+            }
+        }
     }
 }
