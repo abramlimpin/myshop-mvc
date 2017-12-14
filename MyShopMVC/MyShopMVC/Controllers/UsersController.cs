@@ -150,6 +150,16 @@ namespace MyShopMVC.Controllers
             return View(list);
         }
 
+        public List<SelectListItem> GetStatus()
+        {
+            var list = new List<SelectListItem>();
+            list.Add(new SelectListItem() { Text = "Active", Value = "Active" });
+            list.Add(new SelectListItem() { Text = "Inactive", Value = "Inactive" });
+            list.Add(new SelectListItem() { Text = "Blocked", Value = "Blocked" });
+            list.Add(new SelectListItem() { Text = "Archived", Value = "Archived" });
+            return list;
+        }
+
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -186,6 +196,7 @@ namespace MyShopMVC.Controllers
                                 record.Mobile = data["Mobile"].ToString();
                                 record.Status = data["Status"].ToString();
                             }
+                            record.AllStatus = GetStatus();
                             record.UserTypes = GetUserTypes();
                             return View(record);
                         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace MyShopMVC.Models
 {
@@ -70,7 +71,9 @@ namespace MyShopMVC.Models
         public string Mobile { get; set; }
 
         [Display(Name ="Status")]
+        [Required(ErrorMessage ="Select from the list.")]
         public string Status { get; set; }
+        public List<SelectListItem> AllStatus { get; set; }
 
         [Display(Name ="Date Added")]
         public DateTime DateAdded { get; set; }
