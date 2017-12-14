@@ -119,9 +119,11 @@ namespace MyShopMVC.Controllers
                     u.Phone, u.Mobile, u.Status,
                     u.DateAdded, u.DateModified
                     FROM Users u
-                    INNER JOIN Types t ON u.TypeID = t.TypeID";
+                    INNER JOIN Types t ON u.TypeID = t.TypeID
+                    WHERE u.Status!=@Status";
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
+                    cmd.Parameters.AddWithValue("@Status", "Archived");
                     using (SqlDataReader data = cmd.ExecuteReader())
                     {
                         while (data.Read())
@@ -236,6 +238,27 @@ namespace MyShopMVC.Controllers
                     cmd.Parameters.AddWithValue("@Status", record.Status);
                     cmd.Parameters.AddWithValue("@DateModified", DateTime.Now);
                     cmd.Parameters.AddWithValue("@UserID", record.ID);
+                    cmd.ExecuteNonQuery();
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("Index");
+
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"UPDATE Users SET Status=@Status, DateModified=@DateModified
+                    WHERE UserID=@UserID";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Status", "Archived");
+                    cmd.Parameters.AddWithValue("@DateModified", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@UserID", id);
                     cmd.ExecuteNonQuery();
                     return RedirectToAction("Index");
                 }
