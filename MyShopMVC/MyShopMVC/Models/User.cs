@@ -15,6 +15,10 @@ namespace MyShopMVC.Models
         [Display(Name ="User Type")]
         [Required(ErrorMessage ="Select from the list...")]
         public int TypeID { get; set; }
+        public List<UserType> UserTypes { get; set; }
+
+        [Display(Name ="User Type")]
+        public string UserType { get; set; }
 
         [Display(Name ="Email Address")]
         [Required(ErrorMessage ="Required.")]
