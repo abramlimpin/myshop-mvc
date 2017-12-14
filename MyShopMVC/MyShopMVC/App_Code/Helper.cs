@@ -18,6 +18,17 @@ namespace MyShopMVC.App_Code
             return ConfigurationManager.ConnectionStrings["MyCon"].ConnectionString;
         }
 
+
+        /// <summary>
+        /// Returns the value of a key from web.config file
+        /// </summary>
+        /// <param name="key">AppSettings' key</param>
+        /// <returns>Key value</returns>
+        public static string GetValue(string key)
+        {
+            return ConfigurationManager.AppSettings[key];
+        }
+
         /// <summary>
         /// Returns a hash value using a secured hash algorithm (SHA-2)
         /// </summary>

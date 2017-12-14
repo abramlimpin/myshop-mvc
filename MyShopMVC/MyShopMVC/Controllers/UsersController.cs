@@ -214,32 +214,56 @@ namespace MyShopMVC.Controllers
         [HttpPost]
         public ActionResult Details(User record)
         {
-            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            if (Request.Form["Update"] != null)
             {
-                con.Open();
-                string query = @"UPDATE Users SET TypeID=@TypeID, 
-                    FirstName=@FirstName, LastName=@LastName,
-                    Street=@Street, Municipality=@Municipality, City=@City,
-                    Phone=@Phone, Mobile=@Mobile, Status=@Status,
-                    DateModified=@DateModified
-                    WHERE UserID=@UserID";
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
                 {
-                    cmd.Parameters.AddWithValue("@TypeID", record.TypeID);
-                    cmd.Parameters.AddWithValue("@Email", record.Email);
-                    cmd.Parameters.AddWithValue("@Password", Helper.Hash(record.Password));
-                    cmd.Parameters.AddWithValue("@FirstName", record.FN);
-                    cmd.Parameters.AddWithValue("@LastName", record.LN);
-                    cmd.Parameters.AddWithValue("@Street", record.Street);
-                    cmd.Parameters.AddWithValue("@Municipality", record.Municipality);
-                    cmd.Parameters.AddWithValue("@City", record.City);
-                    cmd.Parameters.AddWithValue("@Phone", record.Phone);
-                    cmd.Parameters.AddWithValue("@Mobile", record.Mobile);
-                    cmd.Parameters.AddWithValue("@Status", record.Status);
-                    cmd.Parameters.AddWithValue("@DateModified", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@UserID", record.ID);
-                    cmd.ExecuteNonQuery();
-                    return RedirectToAction("Index");
+                    con.Open();
+                    string query = @"UPDATE Users SET TypeID=@TypeID, 
+                        FirstName=@FirstName, LastName=@LastName,
+                        Street=@Street, Municipality=@Municipality, City=@City,
+                        Phone=@Phone, Mobile=@Mobile, Status=@Status,
+                        DateModified=@DateModified
+                        WHERE UserID=@UserID";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@TypeID", record.TypeID);
+                        cmd.Parameters.AddWithValue("@FirstName", record.FN);
+                        cmd.Parameters.AddWithValue("@LastName", record.LN);
+                        cmd.Parameters.AddWithValue("@Street", record.Street);
+                        cmd.Parameters.AddWithValue("@Municipality", record.Municipality);
+                        cmd.Parameters.AddWithValue("@City", record.City);
+                        cmd.Parameters.AddWithValue("@Phone", record.Phone);
+                        cmd.Parameters.AddWithValue("@Mobile", record.Mobile);
+                        cmd.Parameters.AddWithValue("@Status", record.Status);
+                        cmd.Parameters.AddWithValue("@DateModified", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@UserID", record.ID);
+                        cmd.ExecuteNonQuery();
+                        return RedirectToAction("Index");
+                    }
+                }
+            }
+            else
+            {
+                using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+                {
+                    con.Open();
+                    string query = @"UPDATE Users SET Password=@Password, DateModified=@DateModified
+                        WHERE UserID=@UserID";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        string tempPassword = Helper.GetValue("TempPassword");
+                        cmd.Parameters.AddWithValue("@Password", Helper.Hash(tempPassword));
+                        cmd.Parameters.AddWithValue("@DateModified", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@UserID", record.ID);
+                        cmd.ExecuteNonQuery();
+
+                        ViewBag.Message = "<div class='alert alert-info'>Password reset to <strong>" + tempPassword + "</strong>.</div>";
+
+                        record.AllStatus = GetStatus();
+                        record.UserTypes = GetUserTypes();
+                        return View(record);
+                    }
                 }
             }
         }
