@@ -40,6 +40,24 @@ namespace MyShopMVC.Controllers
             }
             return list;
         }
+        /// <summary>
+        /// Checks existing email record from Users table
+        /// </summary>
+        /// <param name="email">User input</param>
+        /// <returns>Email record is existing.</returns>
+        bool IsExisting(string email)
+        {
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"SELECT UserID FROM Users WHERE Email=@Email";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    return cmd.ExecuteScalar() == null ? false : true;
+                }
+            }
+        }
 
         public ActionResult Add()
         {
@@ -51,32 +69,41 @@ namespace MyShopMVC.Controllers
         [HttpPost]
         public ActionResult Add(User record)
         {
-            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            if (IsExisting(record.Email))
             {
-                con.Open();
-                string query = @"INSERT INTO Users VALUES
+                ViewBag.Message = "<div class='alert alert-danger'>Email address already existing.</div>";
+                record.UserTypes = GetUserTypes();
+                return View(record);
+            }
+            else
+            {
+                using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+                {
+                    con.Open();
+                    string query = @"INSERT INTO Users VALUES
                     (@TypeID, @Email, @Password, @FirstName, @LastName,
                     @Street, @Municipality, @City,
                     @Phone, @Mobile, @Status,
                     @DateAdded, @DateModified)";
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@TypeID", record.TypeID);
-                    cmd.Parameters.AddWithValue("@Email", record.Email);
-                    cmd.Parameters.AddWithValue("@Password", Helper.Hash(record.Password));
-                    cmd.Parameters.AddWithValue("@FirstName", record.FN);
-                    cmd.Parameters.AddWithValue("@LastName", record.LN);
-                    cmd.Parameters.AddWithValue("@Street", record.Street);
-                    cmd.Parameters.AddWithValue("@Municipality", record.Municipality);
-                    cmd.Parameters.AddWithValue("@City", record.City);
-                    cmd.Parameters.AddWithValue("@Phone", record.Phone);
-                    cmd.Parameters.AddWithValue("@Mobile", record.Mobile);
-                    cmd.Parameters.AddWithValue("@Status", "Active");
-                    cmd.Parameters.AddWithValue("@DateAdded", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@DateModified", DBNull.Value);
-                    cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@TypeID", record.TypeID);
+                        cmd.Parameters.AddWithValue("@Email", record.Email);
+                        cmd.Parameters.AddWithValue("@Password", Helper.Hash(record.Password));
+                        cmd.Parameters.AddWithValue("@FirstName", record.FN);
+                        cmd.Parameters.AddWithValue("@LastName", record.LN);
+                        cmd.Parameters.AddWithValue("@Street", record.Street);
+                        cmd.Parameters.AddWithValue("@Municipality", record.Municipality);
+                        cmd.Parameters.AddWithValue("@City", record.City);
+                        cmd.Parameters.AddWithValue("@Phone", record.Phone);
+                        cmd.Parameters.AddWithValue("@Mobile", record.Mobile);
+                        cmd.Parameters.AddWithValue("@Status", "Active");
+                        cmd.Parameters.AddWithValue("@DateAdded", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@DateModified", DBNull.Value);
+                        cmd.ExecuteNonQuery();
 
-                    return RedirectToAction("Index");
+                        return RedirectToAction("Index");
+                    }
                 }
             }
         }
