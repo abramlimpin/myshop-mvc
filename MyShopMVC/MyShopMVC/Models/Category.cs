@@ -9,7 +9,7 @@ namespace MyShopMVC.Models
     public class Category
     {
         [Key]
-        public string ID { get; set; }
+        public int ID { get; set; }
 
         [Display(Name="Category")]
         public string Name { get; set; }
