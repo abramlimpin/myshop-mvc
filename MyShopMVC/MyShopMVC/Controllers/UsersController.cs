@@ -47,5 +47,38 @@ namespace MyShopMVC.Controllers
             record.UserTypes = GetUserTypes();
             return View(record);
         }
+
+        [HttpPost]
+        public ActionResult Add(User record)
+        {
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"INSERT INTO Users VALUES
+                    (@TypeID, @Email, @Password, @FirstName, @LastName,
+                    @Street, @Municipality, @City,
+                    @Phone, @Mobile, @Status,
+                    @DateAdded, @DateModified)";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@TypeID", record.TypeID);
+                    cmd.Parameters.AddWithValue("@Email", record.Email);
+                    cmd.Parameters.AddWithValue("@Password", Helper.Hash(record.Password));
+                    cmd.Parameters.AddWithValue("@FirstName", record.FN);
+                    cmd.Parameters.AddWithValue("@LastName", record.LN);
+                    cmd.Parameters.AddWithValue("@Street", record.Street);
+                    cmd.Parameters.AddWithValue("@Municipality", record.Municipality);
+                    cmd.Parameters.AddWithValue("@City", record.City);
+                    cmd.Parameters.AddWithValue("@Phone", record.Phone);
+                    cmd.Parameters.AddWithValue("@Mobile", record.Mobile);
+                    cmd.Parameters.AddWithValue("@Status", "Active");
+                    cmd.Parameters.AddWithValue("@DateAdded", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@DateModified", DBNull.Value);
+                    cmd.ExecuteNonQuery();
+
+                    return RedirectToAction("Index");
+                }
+            }
+        }
     }
 }
