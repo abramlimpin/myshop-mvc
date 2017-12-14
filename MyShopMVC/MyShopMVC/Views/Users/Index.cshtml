@@ -78,9 +78,14 @@
             @Html.DisplayFor(modelItem => item.DateModified)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            <a href="@Url.Action("Details", "Users", new { id = item.ID })" class="btn btn-xs btn-info"
+                title="View Details">
+                <i class="fa fa-edit fa-fw"></i>
+            </a>
+            <a href="@Url.Action("Delete", "Users", new { id = item.ID })" class="btn btn-xs btn-danger"
+                title="Archive" onclick='return confirm("Archive record?");'>
+                <i class="fa fa-trash fa-fw"></i>
+            </a>
         </td>
     </tr>
 }
