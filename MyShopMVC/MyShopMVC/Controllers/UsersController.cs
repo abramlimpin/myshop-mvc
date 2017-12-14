@@ -149,5 +149,53 @@ namespace MyShopMVC.Controllers
             }
             return View(list);
         }
+
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("Index");
+
+            var record = new User();
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"SELECT UserID, TypeID, FirstName, LastName,
+                    Email, Street, Municipality, City,
+                    Phone, Mobile, Status
+                    FROM Users
+                    WHERE UserID=@UserID AND Status!=@Status";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", id);
+                    cmd.Parameters.AddWithValue("@Status", "Archived");
+                    using (SqlDataReader data = cmd.ExecuteReader())
+                    {
+                        if (data.HasRows)
+                        {
+                            while (data.Read())
+                            {
+                                record.ID = int.Parse(data["UserID"].ToString());
+                                record.TypeID = int.Parse(data["TypeID"].ToString());
+                                record.Email = data["Email"].ToString();
+                                record.FN = data["FirstName"].ToString();
+                                record.LN = data["LastName"].ToString();
+                                record.Street = data["Street"].ToString();
+                                record.Municipality = data["Municipality"].ToString();
+                                record.City = data["City"].ToString();
+                                record.Phone = data["Phone"].ToString();
+                                record.Mobile = data["Mobile"].ToString();
+                                record.Status = data["Status"].ToString();
+                            }
+                            record.UserTypes = GetUserTypes();
+                            return View(record);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
