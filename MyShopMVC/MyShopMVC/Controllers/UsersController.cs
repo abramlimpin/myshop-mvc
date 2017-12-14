@@ -21,7 +21,7 @@ namespace MyShopMVC.Controllers
             using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
             {
                 con.Open();
-                string query = @"SELECT TypeID, UserType FROM UserTypes
+                string query = @"SELECT TypeID, UserType FROM Types
                     ORDER BY UserType";
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -39,6 +39,13 @@ namespace MyShopMVC.Controllers
                 }
             }
             return list;
+        }
+
+        public ActionResult Add()
+        {
+            User record = new User();
+            record.UserTypes = GetUserTypes();
+            return View(record);
         }
     }
 }
