@@ -78,5 +78,45 @@ namespace MyShopMVC.Controllers
                 }
             }
         }
+
+        public ActionResult Index()
+        {
+            var list = new List<Product>();
+            using (SqlConnection con = new SqlConnection(Helper.GetConnection()))
+            {
+                con.Open();
+                string query = @"SELECT p.ProductID, p.Name, p.Code, c.Category,
+                    p.Image, p.Price, p.IsFeatured, p.Status,
+                    p.DateAdded, p.DateModified
+                    FROM Products p
+                    INNER JOIN Categories c ON p.CatID = c.CatID
+                    WHERE p.Status!=@Status";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Status", "Archived");
+                    using (SqlDataReader data = cmd.ExecuteReader())
+                    {
+                        while (data.Read())
+                        {
+                            list.Add(new Product
+                            {
+                                ID = int.Parse(data["ProductID"].ToString()),
+                                Category = data["Category"].ToString(),
+                                Name = data["Name"].ToString(),
+                                Code = data["Code"].ToString(),
+                                Image = data["Image"].ToString(),
+                                IsFeatured = data["IsFeatured"].ToString() == "Yes" ? true : false,
+                                Price = decimal.Parse(data["Price"].ToString()),
+                                Status = data["Status"].ToString(),
+                                DateAdded = DateTime.Parse(data["DateAdded"].ToString()),
+                                DateModified = data["DateModified"].ToString() == "" ? (DateTime?)null :
+                                    DateTime.Parse(data["DateModified"].ToString())
+                            });
+                        }
+                    }
+                }
+            }
+            return View(list);
+        }
     }
 }

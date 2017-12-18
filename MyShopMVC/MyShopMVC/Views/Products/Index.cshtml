@@ -1,0 +1,90 @@
+﻿@model IEnumerable<MyShopMVC.Models.Product>
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<h2>Products</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="tblProducts" class="table">
+    <thead>
+    <th colspan="2">
+        @Html.DisplayNameFor(model => model.ID)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Category)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.IsFeatured)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Price)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Status)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.DateAdded)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.DateModified)
+    </th>
+    <th></th>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    <img src="../Images/Products/@item.Image" width="200" alt="@item.Name"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)<br />
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.Raw((item.IsFeatured) ? "Yes" : "No")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateAdded)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateModified)
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", "Products", new { id = item.ID })" class="btn btn-xs btn-info"
+                       title="View Details">
+                        <i class="fa fa-edit fa-fw"></i>
+                    </a>
+                    <a href="@Url.Action("Delete", "Products", new { id = item.ID })" class="btn btn-xs btn-danger"
+                       title="Archive" onclick='return confirm("Archive record?");'>
+                        <i class="fa fa-trash fa-fw"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('#tblProducts').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'print'
+            ]
+        });
+    });
+</script>
+
