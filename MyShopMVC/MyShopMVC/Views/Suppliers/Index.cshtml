@@ -1,0 +1,98 @@
+﻿@model IEnumerable<MyShopMVC.Models.Supplier>
+
+@{
+    ViewBag.Title = "Suppliers";
+}
+
+<h2>Suppliers</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="tblSuppliers" class="table">
+    <thead>
+    <th>
+        @Html.DisplayNameFor(model => model.ID)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Company)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Contact)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Address)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Phone)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Mobile)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Status)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.DateAdded)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.DateModified)
+    </th>
+    <th></th>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contact)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mobile)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateAdded)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateModified)
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", "Suppliers", new { id = item.ID })" class="btn btn-xs btn-info"
+                       title="View Details">
+                        <i class="fa fa-edit fa-fw"></i>
+                    </a>
+                    <a href="@Url.Action("Delete", "Suppliers", new { id = item.ID })" class="btn btn-xs btn-danger"
+                       title="Archive" onclick='return confirm("Archive record?");'>
+                        <i class="fa fa-trash fa-fw"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('#tblSuppliers').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'print'
+            ]
+        });
+    });
+</script>
+
